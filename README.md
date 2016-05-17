@@ -1,0 +1,1 @@
+# Strathweb.TypedRouting.AspNetCore
