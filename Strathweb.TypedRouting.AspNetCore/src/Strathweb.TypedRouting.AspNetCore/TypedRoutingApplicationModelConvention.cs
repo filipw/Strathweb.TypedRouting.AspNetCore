@@ -23,7 +23,8 @@ namespace Strathweb.TypedRouting.AspNetCore
                     {
                         var action = controller.Actions.FirstOrDefault(x => x.ActionMethod == route.ActionMember);
                         // todo: check this
-                        action?.Selectors.Add(new SelectorModel
+                        action?.Selectors.Clear();
+                        action?.Selectors.Insert(0, new SelectorModel
                         {
                             AttributeRouteModel = route,
                             ActionConstraints = { new HttpMethodActionConstraint(route.HttpMethods) }
