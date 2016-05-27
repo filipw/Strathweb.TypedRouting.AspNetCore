@@ -18,12 +18,9 @@ A project enabling strongly typed routing in ASP.NET Core MVC projects.
 ```
 
 This creates:
-
-– a GET route to `/homepage`
-
-– a GET route to `/aboutpage/{name}`
-
-– a POST route to `/sendcontact`
+* a GET route to `/homepage`
+* a GET route to `/aboutpage/{name}`
+* a POST route to `/sendcontact`
 
 All of which go against the relevant methods on our `HomeController`. Since the API is fluent, you can also give the routes names so that you can use them with i.e. link generation.
 
