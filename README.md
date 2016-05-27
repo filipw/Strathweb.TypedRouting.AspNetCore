@@ -25,5 +25,5 @@ This creates:
 All of which go against the relevant methods on our `HomeController`. Since the API is fluent, you can also give the routes names so that you can use them with i.e. link generation.
 
 ```
-opt.GetRoute("homepage", c => c.Action<HomeController>(x => x.Index())).WithName("foo");
+opt.Get("homepage", c => c.Action<HomeController>(x => x.Index())).WithName("foo");
 ```
