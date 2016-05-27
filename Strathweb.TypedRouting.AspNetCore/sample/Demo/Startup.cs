@@ -22,11 +22,11 @@ namespace Demo
             services.AddMvc(opt =>
             {
                 opt.EnableTypedRouting();
-                opt.GetRoute("api/values", c => c.Action<ValuesController>(x => x.Get()));
-                opt.GetRoute("api/values/{id}", c => c.Action<ValuesController>(x => x.Get(Param<int>.Any)));
-                opt.PostRoute("api/values", c => c.Action<ValuesController>(x => x.Post(Param<string>.Any)));
-                opt.PutRoute("api/values/{id}", c => c.Action<ValuesController>(x => x.Put(Param<int>.Any, Param<string>.Any)));
-                opt.DeleteRoute("api/values/{id}", c => c.Action<ValuesController>(x => x.Delete(Param<int>.Any)));
+                opt.Get("api/values", c => c.Action<ValuesController>(x => x.Get()));
+                opt.Get("api/values/{id}", c => c.Action<ValuesController>(x => x.Get(Param<int>.Any)));
+                opt.Post("api/values", c => c.Action<ValuesController>(x => x.Post(Param<string>.Any)));
+                opt.Put("api/values/{id}", c => c.Action<ValuesController>(x => x.Put(Param<int>.Any, Param<string>.Any)));
+                opt.Delete("api/values/{id}", c => c.Action<ValuesController>(x => x.Delete(Param<int>.Any)));
             });
         }
 

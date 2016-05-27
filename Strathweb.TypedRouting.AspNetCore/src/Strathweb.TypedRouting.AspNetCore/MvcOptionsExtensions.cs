@@ -8,27 +8,27 @@ namespace Strathweb.TypedRouting.AspNetCore
 {
     public static class MvcOptionsExtensions
     {
-        public static TypedRoute GetRoute(this MvcOptions opts, string template, Action<TypedRoute> configSetup)
+        public static TypedRoute Get(this MvcOptions opts, string template, Action<TypedRoute> configSetup)
         {
             return AddRoute(template, configSetup).ForHttpMethods("GET");
         }
 
-        public static TypedRoute PostRoute(this MvcOptions opts, string template, Action<TypedRoute> configSetup)
+        public static TypedRoute Post(this MvcOptions opts, string template, Action<TypedRoute> configSetup)
         {
             return AddRoute(template, configSetup).ForHttpMethods("POST");
         }
 
-        public static TypedRoute PutRoute(this MvcOptions opts, string template, Action<TypedRoute> configSetup)
+        public static TypedRoute Put(this MvcOptions opts, string template, Action<TypedRoute> configSetup)
         {
             return AddRoute(template, configSetup).ForHttpMethods("PUT");
         }
 
-        public static TypedRoute DeleteRoute(this MvcOptions opts, string template, Action<TypedRoute> configSetup)
+        public static TypedRoute Delete(this MvcOptions opts, string template, Action<TypedRoute> configSetup)
         {
             return AddRoute(template, configSetup).ForHttpMethods("DELETE");
         }
 
-        public static TypedRoute TypedRoute(this MvcOptions opts, string template, Action<TypedRoute> configSetup)
+        public static TypedRoute Route(this MvcOptions opts, string template, Action<TypedRoute> configSetup)
         {
             return AddRoute(template, configSetup);
         }
