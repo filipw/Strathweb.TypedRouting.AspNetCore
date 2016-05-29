@@ -22,13 +22,20 @@ namespace Strathweb.TypedRouting.AspNetCore
                     foreach (var route in typedRoutes)
                     {
                         var action = controller.Actions.FirstOrDefault(x => x.ActionMethod == route.ActionMember);
-                        // todo: check this
-                        action?.Selectors.Clear();
-                        action?.Selectors.Insert(0, new SelectorModel
+
+                        var selectorModel = new SelectorModel
                         {
                             AttributeRouteModel = route,
-                            ActionConstraints = { new HttpMethodActionConstraint(route.HttpMethods) }
-                        });
+                            
+                        };
+
+                        foreach(var constraint in route.Constraints)
+                        {
+                            selectorModel.ActionConstraints.Add(constraint);
+                        }
+
+                        action?.Selectors.Clear();
+                        action?.Selectors.Insert(0, selectorModel);
                     }
                 }
             }

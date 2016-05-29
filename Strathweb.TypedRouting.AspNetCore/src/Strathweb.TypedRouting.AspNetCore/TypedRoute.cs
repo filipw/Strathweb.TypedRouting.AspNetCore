@@ -5,6 +5,8 @@ using System.Linq.Expressions;
 using System.Reflection;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Mvc.ApplicationModels;
+using Microsoft.AspNetCore.Mvc.ActionConstraints;
+using Microsoft.AspNetCore.Mvc.Internal;
 
 namespace Strathweb.TypedRouting.AspNetCore
 {
@@ -13,14 +15,14 @@ namespace Strathweb.TypedRouting.AspNetCore
         public TypedRoute(string template)
         {
             Template = template;
-            HttpMethods = new string[0];
+            Constraints = new List<IActionConstraintMetadata>();
         }
 
         public TypeInfo ControllerType { get; private set; }
 
         public MethodInfo ActionMember { get; private set; }
 
-        public IEnumerable<string> HttpMethods { get; private set; }
+        public List<IActionConstraintMetadata> Constraints { get; private set; }
 
         public TypedRoute Controller<TController>()
         {
@@ -59,7 +61,13 @@ namespace Strathweb.TypedRouting.AspNetCore
 
         public TypedRoute ForHttpMethods(params string[] methods)
         {
-            HttpMethods = methods;
+            Constraints.Add(new HttpMethodActionConstraint(methods));
+            return this;
+        }
+
+        public TypedRoute WithConstraints(params IActionConstraintMetadata[] constraints)
+        {
+            Constraints.AddRange(constraints);
             return this;
         }
     }
