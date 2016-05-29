@@ -26,7 +26,6 @@ namespace Strathweb.TypedRouting.AspNetCore
                         var selectorModel = new SelectorModel
                         {
                             AttributeRouteModel = route,
-                            
                         };
 
                         foreach(var constraint in route.Constraints)

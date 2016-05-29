@@ -23,7 +23,7 @@ namespace Demo
             {
                 opt.EnableTypedRouting();
                 opt.Get("api/values", c => c.Action<ValuesController>(x => x.Get()));
-                opt.Get("api/values/{id}", c => c.Action<ValuesController>(x => x.Get(Param<int>.Any)));
+                opt.Get("api/values/{id}", c => c.Action<ValuesController>(x => x.Get(Param<int>.Any))).WithName("GetValueById");
                 opt.Post("api/values", c => c.Action<ValuesController>(x => x.Post(Param<string>.Any)));
                 opt.Put("api/values/{id}", c => c.Action<ValuesController>(x => x.Put(Param<int>.Any, Param<string>.Any)));
                 opt.Delete("api/values/{id}", c => c.Action<ValuesController>(x => x.Delete(Param<int>.Any)));

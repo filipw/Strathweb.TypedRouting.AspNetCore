@@ -8,7 +8,6 @@ namespace Demo.Controllers
 {
     public class ValuesController : Controller
     {
-        //[HttpGet("api/values")]
         public IEnumerable<string> Get()
         {
             return new string[] { "value1", "value2" };
@@ -19,8 +18,14 @@ namespace Demo.Controllers
             return "value";
         }
 
-        public void Post([FromBody]string value)
+        public IActionResult Post([FromBody]string value)
         {
+            // one way to generate a link
+            var link = Url.Link("GetValueById", new { id = 1 });
+
+            // another way to geenrate a link, using the built in action results
+            var result = CreatedAtRoute("GetValueById", new { id = 1 }, "foo");
+            return result;
         }
 
         public void Put(int id, [FromBody]string value)
