@@ -15,9 +15,7 @@ nuget install Strathweb.TypedRouting.AspNetCore
 In your `Startup` class, after adding MVC, call `opt.EnableTypedRouting();` and then configure your routes:
 
 ```csharp
-        services.AddMvc();
-
-        services.Configure<MvcOptions>(opt =>
+        services.AddMvc(opt =>
         {
             opt.EnableTypedRouting();
             opt.Get("homepage", c => c.Action<HomeController>(x => x.Index()));
