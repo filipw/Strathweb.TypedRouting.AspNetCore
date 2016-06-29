@@ -16,13 +16,7 @@ namespace Demo
             _header = header;
         }
 
-        public int Order
-        {
-            get
-            {
-                return 0;
-            }
-        }
+        public int Order => 0;
 
         public bool Accept(ActionConstraintContext context)
         {
