@@ -4,7 +4,7 @@ A library enabling strongly typed routing in ASP.NET Core MVC projects.
 
 ## Installation
 
-Everything is on [Nuget](www.nuget.org/packages/Strathweb.TypedRouting.AspNetCore).
+Everything is on [Nuget](https://www.nuget.org/packages/Strathweb.TypedRouting.AspNetCore).
 
 ```
 nuget install Strathweb.TypedRouting.AspNetCore
