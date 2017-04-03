@@ -1,0 +1,30 @@
+﻿<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <Description>A library enabling typed routing in ASP.NET MVC Core projects. Next generation of the Strathweb.TypedRouting Web API 2 library.</Description>
+    <Authors>filipw</Authors>
+    <TargetFrameworks>net451;netstandard1.6</TargetFrameworks>
+    <AssemblyName>Strathweb.TypedRouting.AspNetCore</AssemblyName>
+    <PackageId>Strathweb.TypedRouting.AspNetCore</PackageId>
+    <PackageTags>ASP.NET Core;routing;typed;asp net;aspnetcore</PackageTags>
+    <PackageIconUrl>https://raw.githubusercontent.com/filipw/Strathweb.TypedRouting.AspNetCore/master/strathweb.png</PackageIconUrl>
+    <PackageProjectUrl>https://github.com/filipw/Strathweb.TypedRouting.AspNetCore</PackageProjectUrl>
+    <PackageLicenseUrl>https://github.com/filipw/Strathweb.TypedRouting.AspNetCore/blob/master/LICENSE</PackageLicenseUrl>
+    <RepositoryType>git</RepositoryType>
+    <RepositoryUrl>https://github.com/filipw/Strathweb.TypedRouting.AspNetCore.git</RepositoryUrl>
+    <PackageTargetFallback Condition=" '$(TargetFramework)' == 'netstandard1.6' ">$(PackageTargetFallback);dnxcore50</PackageTargetFallback>
+    <GenerateAssemblyConfigurationAttribute>false</GenerateAssemblyConfigurationAttribute>
+    <GenerateAssemblyCompanyAttribute>false</GenerateAssemblyCompanyAttribute>
+    <GenerateAssemblyProductAttribute>false</GenerateAssemblyProductAttribute>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <PackageReference Include="Microsoft.AspNetCore.Mvc.Core" Version="1.0.3" />
+  </ItemGroup>
+
+  <ItemGroup Condition=" '$(TargetFramework)' == 'net451' ">
+    <Reference Include="System" />
+    <Reference Include="Microsoft.CSharp" />
+  </ItemGroup>
+
+</Project>
