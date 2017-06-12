@@ -79,11 +79,11 @@ opt.Get("api/other/{id:int}", c => c.Action<OtherController>(x => x.Action2(Para
 You can also specify constraints via the fluent API, by chaining `IActionConstraintMetadata` implementations. Consider the following sample constraint class:
 
 ```csharp
-    public class ManadatoryHeaderConstraint : IActionConstraint, IActionConstraintMetadata
+    public class MandatoryHeaderConstraint : IActionConstraint, IActionConstraintMetadata
     {
         private string _header;
 
-        public ManadatoryHeaderConstraint(string header)
+        public MandatoryHeaderConstraint(string header)
         {
             _header = header;
         }
@@ -112,5 +112,5 @@ You can also specify constraints via the fluent API, by chaining `IActionConstra
 You can now use this class in the route declaration:
 
 ```csharp
-opt.Get("api/other", c => c.Action<OtherController>(x => x.Action1())).WithConstraints(new ManadatoryHeaderConstraint("CustomHeader"));
+opt.Get("api/other", c => c.Action<OtherController>(x => x.Action1())).WithConstraints(new MandatoryHeaderConstraint("CustomHeader"));
 ```
