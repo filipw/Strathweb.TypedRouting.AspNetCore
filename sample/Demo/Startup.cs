@@ -28,7 +28,7 @@ namespace Demo
                 opt.Put("api/values/{id}", c => c.Action<ValuesController>(x => x.Put(Param<int>.Any, Param<string>.Any)));
                 opt.Delete("api/values/{id}", c => c.Action<ValuesController>(x => x.Delete(Param<int>.Any)));
 
-                opt.Get("api/other", c => c.Action<OtherController>(x => x.Action1())).WithConstraints(new ManadatoryHeaderConstraint("CustomHeader"));
+                opt.Get("api/other", c => c.Action<OtherController>(x => x.Action1())).WithConstraints(new MandatoryHeaderConstraint("CustomHeader"));
                 opt.Get("api/other/{id:int}", c => c.Action<OtherController>(x => x.Action2(Param<int>.Any)));
             });
         }
