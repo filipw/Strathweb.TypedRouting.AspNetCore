@@ -7,11 +7,11 @@ using System.Threading.Tasks;
 namespace Demo
 {
 
-    public class ManadatoryHeaderConstraint : IActionConstraint, IActionConstraintMetadata
+    public class MandatoryHeaderConstraint : IActionConstraint, IActionConstraintMetadata
     {
         private string _header;
 
-        public ManadatoryHeaderConstraint(string header)
+        public MandatoryHeaderConstraint(string header)
         {
             _header = header;
         }
