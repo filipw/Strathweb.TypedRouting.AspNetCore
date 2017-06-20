@@ -63,9 +63,9 @@ Finally, you can also use this link generation technique with the built-in actio
         }
 ```
 
-## Route constraints
+## Action constraints
 
-The library supports two ways of specifying route constraints:
+The library supports two ways of specifying MVC action constraints:
 
  - inline in the template
  - via fluent API
