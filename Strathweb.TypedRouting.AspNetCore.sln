@@ -9,7 +9,9 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Strathweb.TypedRouting.AspN
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Demo", "sample\Demo\Demo.csproj", "{6AEBA69E-BFC3-46F2-91C6-50C718FE70D4}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Strathweb.TypedRouting.AspNetCore.Tests", "tests\Strathweb.TypedRouting.AspNetCore.Tests\Strathweb.TypedRouting.AspNetCore.Tests.csproj", "{7AD4A5F8-7B61-4FBF-833F-E904C36A97F6}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Strathweb.TypedRouting.AspNetCore.Tests", "tests\Strathweb.TypedRouting.AspNetCore.Tests\Strathweb.TypedRouting.AspNetCore.Tests.csproj", "{7AD4A5F8-7B61-4FBF-833F-E904C36A97F6}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "tests", "tests", "{9CBBEAD5-DA4B-4244-9478-A3CBC0407610}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -36,5 +38,6 @@ Global
 	GlobalSection(NestedProjects) = preSolution
 		{D2234F89-1547-4038-AABD-1BFDC5E784F8} = {AE85EB00-0646-4796-A7C7-93EBF06FA66C}
 		{6AEBA69E-BFC3-46F2-91C6-50C718FE70D4} = {AE85EB00-0646-4796-A7C7-93EBF06FA66C}
+		{7AD4A5F8-7B61-4FBF-833F-E904C36A97F6} = {9CBBEAD5-DA4B-4244-9478-A3CBC0407610}
 	EndGlobalSection
 EndGlobal
