@@ -22,11 +22,11 @@ namespace Demo
             services.AddMvc(opt =>
             {
                 opt.EnableTypedRouting();
-                opt.Get("api/values", c => c.Action<ValuesController>(x => x.Get()));
-                opt.Get("api/values/{id}", c => c.Action<ValuesController>(x => x.Get(Param<int>.Any))).WithName("GetValueById");
-                opt.Post("api/values", c => c.Action<ValuesController>(x => x.Post(Param<string>.Any)));
-                opt.Put("api/values/{id}", c => c.Action<ValuesController>(x => x.Put(Param<int>.Any, Param<string>.Any)));
-                opt.Delete("api/values/{id}", c => c.Action<ValuesController>(x => x.Delete(Param<int>.Any)));
+                opt.Get("api/items", c => c.Action<ItemsController>(x => x.Get()));
+                opt.Get("api/items/{id}", c => c.Action<ItemsController>(x => x.Get(Param<int>.Any))).WithName("GetItemById");
+                opt.Post("api/items", c => c.Action<ItemsController>(x => x.Post(Param<Item>.Any)));
+                opt.Put("api/items/{id}", c => c.Action<ItemsController>(x => x.Put(Param<int>.Any, Param<Item>.Any)));
+                opt.Delete("api/items/{id}", c => c.Action<ItemsController>(x => x.Delete(Param<int>.Any)));
 
                 opt.Get("api/other", c => c.Action<OtherController>(x => x.Action1())).WithConstraints(new MandatoryHeaderConstraint("CustomHeader"));
                 opt.Get("api/other/{id:int}", c => c.Action<OtherController>(x => x.Action2(Param<int>.Any)));
