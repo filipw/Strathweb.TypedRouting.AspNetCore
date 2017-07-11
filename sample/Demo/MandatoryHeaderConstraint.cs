@@ -6,7 +6,6 @@ using System.Threading.Tasks;
 
 namespace Demo
 {
-
     public class MandatoryHeaderConstraint : IActionConstraint, IActionConstraintMetadata
     {
         private string _header;

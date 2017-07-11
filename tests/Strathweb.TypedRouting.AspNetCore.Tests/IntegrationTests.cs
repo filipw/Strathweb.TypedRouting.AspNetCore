@@ -27,13 +27,13 @@ namespace Strathweb.TypedRouting.AspNetCore.Tests
         {
             var client = _server.CreateClient();
 
-            var request = new HttpRequestMessage(HttpMethod.Get, "api/values");
+            var request = new HttpRequestMessage(HttpMethod.Get, "api/items");
             var result = await client.SendAsync(request);
-            var values = JsonConvert.DeserializeObject<string[]>(await result.Content.ReadAsStringAsync());
+            var items = JsonConvert.DeserializeObject<Item[]>(await result.Content.ReadAsStringAsync());
 
-            Assert.Equal(2, values.Length);
-            Assert.Equal("value1", values[0]);
-            Assert.Equal("value2", values[1]);
+            Assert.Equal(2, items.Length);
+            Assert.Equal("value1", items[0].Text);
+            Assert.Equal("value2", items[1].Text);
         }
 
         [Fact]
@@ -41,12 +41,29 @@ namespace Strathweb.TypedRouting.AspNetCore.Tests
         {
             var client = _server.CreateClient();
 
-            var request = new HttpRequestMessage(HttpMethod.Get, "api/values/7");
+            var request = new HttpRequestMessage(HttpMethod.Get, "api/items/7");
             var result = await client.SendAsync(request);
-            var value = await result.Content.ReadAsStringAsync();
+            var item = JsonConvert.DeserializeObject<Item>(await result.Content.ReadAsStringAsync());
 
-            Assert.NotNull(value);
-            Assert.Equal("value", value);
+            Assert.NotNull(item);
+            Assert.Equal("value", item.Text);
+        }
+
+        [Fact]
+        public async Task Post()
+        {
+            var client = _server.CreateClient();
+
+            var item = new Item { Text = "foo" };
+            var request = new HttpRequestMessage(HttpMethod.Post, "api/items");
+            request.Content = new StringContent(JsonConvert.SerializeObject(item));
+            request.Content.Headers.ContentType = new MediaTypeHeaderValue("application/json");
+
+            var result = await client.SendAsync(request);
+            var eachoItem = JsonConvert.DeserializeObject<Item>(await result.Content.ReadAsStringAsync());
+
+            Assert.NotNull(eachoItem);
+            Assert.Equal(item.Text, eachoItem.Text);
         }
     }
 }
