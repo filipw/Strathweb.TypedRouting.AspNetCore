@@ -7,6 +7,7 @@ using System.Threading.Tasks;
 using Microsoft.AspNetCore.Mvc.ApplicationModels;
 using Microsoft.AspNetCore.Mvc.ActionConstraints;
 using Microsoft.AspNetCore.Mvc.Internal;
+using Microsoft.AspNetCore.Mvc.Filters;
 
 namespace Strathweb.TypedRouting.AspNetCore
 {
@@ -16,6 +17,7 @@ namespace Strathweb.TypedRouting.AspNetCore
         {
             Template = template;
             Constraints = new List<IActionConstraintMetadata>();
+            Filters = new FilterCollection();
         }
 
         public TypeInfo ControllerType { get; private set; }
@@ -23,6 +25,8 @@ namespace Strathweb.TypedRouting.AspNetCore
         public MethodInfo ActionMember { get; private set; }
 
         public List<IActionConstraintMetadata> Constraints { get; private set; }
+
+        public FilterCollection Filters { get; }
 
         public TypedRoute Controller<TController>()
         {
@@ -68,6 +72,16 @@ namespace Strathweb.TypedRouting.AspNetCore
         public TypedRoute WithConstraints(params IActionConstraintMetadata[] constraints)
         {
             Constraints.AddRange(constraints);
+            return this;
+        }
+
+        public TypedRoute WithFilters(params IFilterMetadata[] filters)
+        {
+            foreach (var filter in filters)
+            {
+                Filters.Add(filter);
+            }
+
             return this;
         }
     }
