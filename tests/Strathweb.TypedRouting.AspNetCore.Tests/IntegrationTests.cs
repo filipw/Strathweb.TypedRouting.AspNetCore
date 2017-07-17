@@ -4,6 +4,7 @@ using Microsoft.AspNetCore.TestHost;
 using Newtonsoft.Json;
 using System;
 using System.IO;
+using System.Linq;
 using System.Net;
 using System.Net.Http;
 using System.Net.Http.Headers;
@@ -122,6 +123,20 @@ namespace Strathweb.TypedRouting.AspNetCore.Tests
             var result = await client.SendAsync(request);
 
             Assert.Equal(HttpStatusCode.NotFound, result.StatusCode);
+        }
+
+        [Fact]
+        public async Task ApiOther_WithHeader_VerifyFilterPresence()
+        {
+            var client = _server.CreateClient();
+
+            var request = new HttpRequestMessage(HttpMethod.Get, "api/other");
+            request.Headers.Add("CustomHeader", "abc");
+
+            var result = await client.SendAsync(request);
+            var executionTime = result.Headers.GetValues("ActionDuration").FirstOrDefault();
+
+            Assert.NotNull(executionTime);
         }
     }
 }

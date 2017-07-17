@@ -34,14 +34,14 @@ namespace Strathweb.TypedRouting.AspNetCore
             return this;
         }
 
-        public TypedRoute Action<T, U>(Expression<Func<T, U>> expression)
+        public TypedRoute Action<T>(Expression<Action<T>> expression)
         {
             ActionMember = GetMethodInfoInternal(expression);
             ControllerType = ActionMember.DeclaringType.GetTypeInfo();
             return this;
         }
 
-        public TypedRoute Action<T>(Expression<Action<T>> expression)
+        public TypedRoute Action<T>(Expression<Func<T, Task>> expression)
         {
             ActionMember = GetMethodInfoInternal(expression);
             ControllerType = ActionMember.DeclaringType.GetTypeInfo();
