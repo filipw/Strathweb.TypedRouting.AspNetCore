@@ -32,7 +32,12 @@ namespace Strathweb.TypedRouting.AspNetCore
                         {
                             selectorModel.ActionConstraints.Add(constraint);
                         }
-                        
+
+                        foreach (var filter in route.Filters)
+                        {
+                            action.Filters.Add(filter);
+                        }
+
                         action?.Selectors.Clear();
                         action?.Selectors.Insert(0, selectorModel);
                     }

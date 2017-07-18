@@ -8,8 +8,10 @@ namespace Demo.Controllers
 {
     public class OtherController : Controller
     {
-        public string Action1()
+        [System.Diagnostics.CodeAnalysis.SuppressMessage("Await.Warning", "CS4014:Await.Warning")]
+        public async Task<string> Action1()
         {
+            await Task.Delay(100);
             return "bar";
         }
 
