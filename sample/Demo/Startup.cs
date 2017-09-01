@@ -19,11 +19,13 @@ namespace Demo
         public void ConfigureServices(IServiceCollection services)
         {
             services.AddSingleton<TimerFilter>();
+            services.AddSingleton<AnnotationFilter>();
+
             services.AddMvc(opt =>
             {
                 //opt.EnableTypedRouting();
-                opt.Get("api/items", c => c.Action<ItemsController>(x => x.Get()));
-                opt.Get("api/items/{id}", c => c.Action<ItemsController>(x => x.Get(Param<int>.Any))).WithName("GetItemById");
+                opt.Get("api/items", c => c.Action<ItemsController>(x => x.Get())).WithFilters(new AnnotationFilter());
+                opt.Get("api/items/{id}", c => c.Action<ItemsController>(x => x.Get(Param<int>.Any))).WithName("GetItemById").WithFilter<AnnotationFilter>();
                 opt.Post("api/items", c => c.Action<ItemsController>(x => x.Post(Param<Item>.Any)));
                 opt.Put("api/items/{id}", c => c.Action<ItemsController>(x => x.Put(Param<int>.Any, Param<Item>.Any)));
                 opt.Delete("api/items/{id}", c => c.Action<ItemsController>(x => x.Delete(Param<int>.Any)));

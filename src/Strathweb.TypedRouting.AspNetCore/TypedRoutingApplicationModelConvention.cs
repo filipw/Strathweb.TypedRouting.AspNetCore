@@ -19,7 +19,7 @@ namespace Strathweb.TypedRouting.AspNetCore
             _serviceProvider = serviceProvider;
         }
 
-        internal static readonly Dictionary<TypeInfo, List<TypedRoute>> Routes = new Dictionary<TypeInfo, List<TypedRoute>>();
+        internal static Dictionary<TypeInfo, List<TypedRoute>> Routes = new Dictionary<TypeInfo, List<TypedRoute>>();
 
         public void Apply(ApplicationModel application)
         {

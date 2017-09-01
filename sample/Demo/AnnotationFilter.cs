@@ -1,18 +1,6 @@
-﻿using Demo;
-using Microsoft.AspNetCore.Hosting;
-using Microsoft.AspNetCore.Mvc.Filters;
-using Microsoft.AspNetCore.TestHost;
-using Newtonsoft.Json;
-using System;
-using System.IO;
-using System.Linq;
-using System.Net;
-using System.Net.Http;
-using System.Net.Http.Headers;
-using System.Threading.Tasks;
-using Xunit;
+﻿using Microsoft.AspNetCore.Mvc.Filters;
 
-namespace Strathweb.TypedRouting.AspNetCore.Tests
+namespace Demo
 {
     public class AnnotationFilter : ActionFilterAttribute
     {
