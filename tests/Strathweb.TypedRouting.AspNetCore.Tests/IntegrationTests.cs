@@ -19,6 +19,7 @@ namespace Strathweb.TypedRouting.AspNetCore.Tests
 
         public IntegrationTests()
         {
+            TypedRoutingApplicationModelConvention.Routes.Clear();
             _server = new TestServer(new WebHostBuilder()
                     .UseContentRoot(Directory.GetCurrentDirectory())
                     .UseStartup<Startup>());
@@ -39,6 +40,17 @@ namespace Strathweb.TypedRouting.AspNetCore.Tests
         }
 
         [Fact]
+        public async Task Filter_From_Instance()
+        {
+            var client = _server.CreateClient();
+            var request = new HttpRequestMessage(HttpMethod.Get, "api/items");
+            var result = await client.SendAsync(request);
+
+            Assert.Equal("Demo.AnnotationFilter", result.Headers.GetValues("FilterBefore").FirstOrDefault());
+            Assert.Equal("Demo.AnnotationFilter", result.Headers.GetValues("FilterAfter").FirstOrDefault());
+        }
+
+        [Fact]
         public async Task Get_ById()
         {
             var client = _server.CreateClient();
@@ -49,6 +61,18 @@ namespace Strathweb.TypedRouting.AspNetCore.Tests
 
             Assert.NotNull(item);
             Assert.Equal("value", item.Text);
+        }
+
+        [Fact]
+        public async Task Filter_From_DI()
+        {
+            var client = _server.CreateClient();
+
+            var request = new HttpRequestMessage(HttpMethod.Get, "api/items/7");
+            var result = await client.SendAsync(request);
+
+            Assert.Equal("Demo.AnnotationFilter", result.Headers.GetValues("FilterBefore").FirstOrDefault());
+            Assert.Equal("Demo.AnnotationFilter", result.Headers.GetValues("FilterAfter").FirstOrDefault());
         }
 
         [Fact]
@@ -123,20 +147,6 @@ namespace Strathweb.TypedRouting.AspNetCore.Tests
             var result = await client.SendAsync(request);
 
             Assert.Equal(HttpStatusCode.NotFound, result.StatusCode);
-        }
-
-        [Fact]
-        public async Task ApiOther_WithHeader_VerifyFilterPresence()
-        {
-            var client = _server.CreateClient();
-
-            var request = new HttpRequestMessage(HttpMethod.Get, "api/other");
-            request.Headers.Add("CustomHeader", "abc");
-
-            var result = await client.SendAsync(request);
-            var executionTime = result.Headers.GetValues("ActionDuration").FirstOrDefault();
-
-            Assert.NotNull(executionTime);
         }
     }
 }

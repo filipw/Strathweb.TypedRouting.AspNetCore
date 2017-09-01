@@ -3,6 +3,9 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.Extensions.DependencyInjection;
+using Microsoft.Extensions.Options;
+using Microsoft.Extensions.DependencyInjection.Extensions;
 
 namespace Strathweb.TypedRouting.AspNetCore
 {
@@ -54,7 +57,7 @@ namespace Strathweb.TypedRouting.AspNetCore
 
         public static void EnableTypedRouting(this MvcOptions opts)
         {
-            opts.Conventions.Add(new TypedRoutingApplicationModelConvention());
+            opts.Conventions.Add(new TypedRoutingApplicationModelConvention(null));
         }
     }
 }
