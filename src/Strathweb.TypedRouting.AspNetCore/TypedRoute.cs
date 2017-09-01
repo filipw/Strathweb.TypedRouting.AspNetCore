@@ -18,6 +18,7 @@ namespace Strathweb.TypedRouting.AspNetCore
             Template = template;
             Constraints = new List<IActionConstraintMetadata>();
             Filters = new FilterCollection();
+            FilterTypes = new List<Type>();
         }
 
         public TypeInfo ControllerType { get; private set; }
@@ -27,6 +28,8 @@ namespace Strathweb.TypedRouting.AspNetCore
         public List<IActionConstraintMetadata> Constraints { get; private set; }
 
         public FilterCollection Filters { get; }
+
+        public List<Type> FilterTypes { get; }
 
         public TypedRoute Controller<TController>()
         {
@@ -82,6 +85,12 @@ namespace Strathweb.TypedRouting.AspNetCore
                 Filters.Add(filter);
             }
 
+            return this;
+        }
+
+        public TypedRoute WithFilter<T>() where T : IFilterMetadata
+        {
+            FilterTypes.Add(typeof(T));
             return this;
         }
     }

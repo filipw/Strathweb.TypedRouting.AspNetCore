@@ -5,11 +5,20 @@ using System.Reflection;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Mvc.ApplicationModels;
 using Microsoft.AspNetCore.Mvc.Internal;
+using Microsoft.Extensions.DependencyInjection;
+using Microsoft.AspNetCore.Mvc.Filters;
 
 namespace Strathweb.TypedRouting.AspNetCore
 {
     public class TypedRoutingApplicationModelConvention : IApplicationModelConvention
     {
+        private readonly IServiceProvider _serviceProvider;
+
+        public TypedRoutingApplicationModelConvention(IServiceProvider serviceProvider)
+        {
+            _serviceProvider = serviceProvider;
+        }
+
         internal static readonly Dictionary<TypeInfo, List<TypedRoute>> Routes = new Dictionary<TypeInfo, List<TypedRoute>>();
 
         public void Apply(ApplicationModel application)
@@ -36,6 +45,19 @@ namespace Strathweb.TypedRouting.AspNetCore
                         foreach (var filter in route.Filters)
                         {
                             action.Filters.Add(filter);
+                        }
+
+                        // resolution from DI only supported when ServiceProvider is there
+                        if (_serviceProvider != null)
+                        {
+                            foreach (var filter in route.FilterTypes)
+                            {
+                                var filterMetadata = _serviceProvider.GetService(filter) as IFilterMetadata;
+                                if (filterMetadata != null)
+                                {
+                                    action.Filters.Add(filterMetadata);
+                                }
+                            }
                         }
 
                         action?.Selectors.Clear();

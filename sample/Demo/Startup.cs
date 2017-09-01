@@ -18,9 +18,10 @@ namespace Demo
 
         public void ConfigureServices(IServiceCollection services)
         {
+            services.AddSingleton<TimerFilter>();
             services.AddMvc(opt =>
             {
-                opt.EnableTypedRouting();
+                //opt.EnableTypedRouting();
                 opt.Get("api/items", c => c.Action<ItemsController>(x => x.Get()));
                 opt.Get("api/items/{id}", c => c.Action<ItemsController>(x => x.Get(Param<int>.Any))).WithName("GetItemById");
                 opt.Post("api/items", c => c.Action<ItemsController>(x => x.Post(Param<Item>.Any)));
@@ -28,11 +29,10 @@ namespace Demo
                 opt.Delete("api/items/{id}", c => c.Action<ItemsController>(x => x.Delete(Param<int>.Any)));
 
                 opt.Get("api/other", c => c.Action<OtherController>(x => x.Action1())).
-                    WithConstraints(new MandatoryHeaderConstraint("CustomHeader")).
-                    WithFilters(new TimerFilter());
+                    WithConstraints(new MandatoryHeaderConstraint("CustomHeader"));
 
                 opt.Get("api/other/{id:int}", c => c.Action<OtherController>(x => x.Action2(Param<int>.Any)));
-            });
+            }).EnableTypedRouting();
         }
 
         public void Configure(IApplicationBuilder app, IHostingEnvironment env, ILoggerFactory loggerFactory)
