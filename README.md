@@ -12,16 +12,15 @@ nuget install Strathweb.TypedRouting.AspNetCore
 
 ## Setup
 
-In your `Startup` class, after adding MVC, call `opt.EnableTypedRouting();` and then configure your routes:
+In your `Startup` class, after adding MVC, call `services.EnableTypedRouting();` and then configure your routes:
 
 ```csharp
         services.AddMvc(opt =>
         {
-            opt.EnableTypedRouting();
             opt.Get("homepage", c => c.Action<HomeController>(x => x.Index()));
             opt.Get("aboutpage/{name}", c => c.Action<HomeController>(x => x.About(Param<string>.Any)));
             opt.Post("sendcontact", c => c.Action<HomeController>(x => x.Contact()));
-        });
+        }).EnableTypedRouting();
 ```
 
 This creates:
@@ -30,6 +29,7 @@ This creates:
 * a POST route to `/sendcontact`
 
 All of which go against the relevant methods on our `HomeController`.
+The old API supported calling `.EnableTypedRouting();` on the `MvcOptions` too, but this approach is now deprecated.
 
 ## Link generation
 
@@ -61,6 +61,28 @@ Finally, you can also use this link generation technique with the built-in actio
             var result = CreatedAtRoute("GetValueById", new { id = 1 }, "foo");
             return result;
         }
+```
+
+## Filter support
+
+The route definitions can also be done along with filters that should be executed for a given route. This is equivalent to defining a controller action, and annotating it with a relevant attribute such as action filter or authorization filter.
+
+```csharp
+services.AddMvc(opt =>
+{
+        opt.Get("api/items", c => c.Action<ItemsController>(x => x.Get())).WithFilters(new AnnotationFilter());
+}).EnableTypedRouting();
+```
+
+Filters can also be resolved from ASP.NET Core DI system - as long as they are registered there before.
+
+```csharp
+services.AddSingleton<TimerFilter>();
+
+services.AddMvc(opt =>
+{
+        opt.Get("api/items", c => c.Action<ItemsController>(x => x.Get())).WithFilters(new AnnotationFilter());
+}).EnableTypedRouting();
 ```
 
 ## Action constraints
