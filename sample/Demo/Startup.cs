@@ -23,7 +23,6 @@ namespace Demo
 
             services.AddMvc(opt =>
             {
-                //opt.EnableTypedRouting();
                 opt.Get("api/items", c => c.Action<ItemsController>(x => x.Get())).WithFilters(new AnnotationFilter());
                 opt.Get("api/items/{id}", c => c.Action<ItemsController>(x => x.Get(Param<int>.Any))).WithName("GetItemById").WithFilter<AnnotationFilter>();
                 opt.Post("api/items", c => c.Action<ItemsController>(x => x.Post(Param<Item>.Any)));
