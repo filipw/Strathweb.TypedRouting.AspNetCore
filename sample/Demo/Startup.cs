@@ -8,6 +8,7 @@ using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
 using Strathweb.TypedRouting.AspNetCore;
 using Demo.Controllers;
+using Microsoft.AspNetCore.Authorization;
 
 namespace Demo
 {
@@ -21,10 +22,20 @@ namespace Demo
             services.AddSingleton<TimerFilter>();
             services.AddSingleton<AnnotationFilter>();
 
+            services.AddAuthorization(o =>
+            {
+                o.AddPolicy("MyPolicy", b => b.RequireAuthenticatedUser());
+            });
+
             services.AddMvc(opt =>
             {
-                opt.Get("api/items", c => c.Action<ItemsController>(x => x.Get())).WithFilters(new AnnotationFilter());
-                opt.Get("api/items/{id}", c => c.Action<ItemsController>(x => x.Get(Param<int>.Any))).WithName("GetItemById").WithFilter<AnnotationFilter>();
+                opt.Get("api/items", c => c.Action<ItemsController>(x => x.Get())).
+                    WithFilters(new AnnotationFilter());
+
+                opt.Get("api/items/{id}", c => c.Action<ItemsController>(x => x.Get(Param<int>.Any))).
+                    WithName("GetItemById").
+                    WithFilter<AnnotationFilter>();
+
                 opt.Post("api/items", c => c.Action<ItemsController>(x => x.Post(Param<Item>.Any)));
                 opt.Put("api/items/{id}", c => c.Action<ItemsController>(x => x.Put(Param<int>.Any, Param<Item>.Any)));
                 opt.Delete("api/items/{id}", c => c.Action<ItemsController>(x => x.Delete(Param<int>.Any)));
@@ -33,12 +44,19 @@ namespace Demo
                     WithConstraints(new MandatoryHeaderConstraint("CustomHeader"));
 
                 opt.Get("api/other/{id:int}", c => c.Action<OtherController>(x => x.Action2(Param<int>.Any)));
+
+                opt.Get("api/secure_string", c => c.Action<OtherController>(x => x.Unreachable()).
+                    WithAuthorizationPolicy("MyPolicy"));
+
+                opt.Get("api/secure_instance", c => c.Action<OtherController>(x => x.Unreachable2()).
+                    WithAuthorizationPolicy(new AuthorizationPolicyBuilder().RequireAuthenticatedUser().Build()));
             }).EnableTypedRouting();
         }
 
         public void Configure(IApplicationBuilder app, IHostingEnvironment env, ILoggerFactory loggerFactory)
         {
             loggerFactory.AddDebug();
+            app.UseJwtBearerAuthentication();
             app.UseMvc();
         }
     }

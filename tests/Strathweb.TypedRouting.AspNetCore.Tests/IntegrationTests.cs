@@ -76,6 +76,28 @@ namespace Strathweb.TypedRouting.AspNetCore.Tests
         }
 
         [Fact]
+        public async Task AuthorizationPolicy_DefineViaString()
+        {
+            var client = _server.CreateClient();
+
+            var request = new HttpRequestMessage(HttpMethod.Get, "api/secure_string");
+            var result = await client.SendAsync(request);
+
+            Assert.Equal(HttpStatusCode.Unauthorized, result.StatusCode);
+        }
+
+        [Fact]
+        public async Task AuthorizationPolicy_DefineViaPolicyInstance()
+        {
+            var client = _server.CreateClient();
+
+            var request = new HttpRequestMessage(HttpMethod.Get, "api/secure_instance");
+            var result = await client.SendAsync(request);
+
+            Assert.Equal(HttpStatusCode.Unauthorized, result.StatusCode);
+        }
+
+        [Fact]
         public async Task Post()
         {
             var client = _server.CreateClient();
