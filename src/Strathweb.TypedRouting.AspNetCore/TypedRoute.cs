@@ -8,6 +8,8 @@ using Microsoft.AspNetCore.Mvc.ApplicationModels;
 using Microsoft.AspNetCore.Mvc.ActionConstraints;
 using Microsoft.AspNetCore.Mvc.Internal;
 using Microsoft.AspNetCore.Mvc.Filters;
+using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Mvc.Authorization;
 
 namespace Strathweb.TypedRouting.AspNetCore
 {
@@ -91,6 +93,19 @@ namespace Strathweb.TypedRouting.AspNetCore
         public TypedRoute WithFilter<T>() where T : IFilterMetadata
         {
             FilterTypes.Add(typeof(T));
+            return this;
+        }
+
+        public TypedRoute WithAuthorizationPolicy(string authorizationPolicyName)
+        {
+            Filters.Add(new AuthorizeFilter(authorizationPolicyName));
+            return this;
+        }
+
+        public TypedRoute WithAuthorizationPolicy(AuthorizationPolicy policy)
+        {
+            Filters.Add(new AuthorizeFilter(policy));
+
             return this;
         }
     }

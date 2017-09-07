@@ -19,5 +19,9 @@ namespace Demo.Controllers
         {
             return id;
         }
+
+        public void Unreachable() { }
+
+        public void Unreachable2() { }
     }
 }
