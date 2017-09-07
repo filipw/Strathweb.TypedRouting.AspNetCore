@@ -63,7 +63,7 @@ Finally, you can also use this link generation technique with the built-in actio
         }
 ```
 
-## Filter support
+## Filters
 
 The route definitions can also be done along with filters that should be executed for a given route. This is equivalent to defining a controller action, and annotating it with a relevant attribute such as action filter or authorization filter.
 
@@ -82,6 +82,35 @@ services.AddSingleton<TimerFilter>();
 services.AddMvc(opt =>
 {
         opt.Get("api/items", c => c.Action<ItemsController>(x => x.Get())).WithFilters(new AnnotationFilter());
+}).EnableTypedRouting();
+```
+
+## Authorization Policies
+
+The route definitions can also have ASP.NET Core authorization policies attached to them.
+
+You can pass in a policy instance:
+
+```csharp
+services.AddMvc(opt =>
+{
+        opt.Get("api/secure", c => c.Action<OtherController>(x => x.Foo()).
+                WithAuthorizationPolicy(new AuthorizationPolicyBuilder().RequireAuthenticatedUser().Build()));
+}).EnableTypedRouting();
+```
+
+You can also define a policy as string - then a corresponding policy must be previously registerd in ASP.NET Core DI system.
+
+```csharp
+services.AddAuthorization(o =>
+{
+        o.AddPolicy("MyPolicy", b => b.RequireAuthenticatedUser());
+});
+
+services.AddMvc(opt =>
+{
+        opt.Get("api/secure", c => c.Action<OtherController>(x => x.Foo()).
+                WithAuthorizationPolicy("MyPolicy"));
 }).EnableTypedRouting();
 ```
 
