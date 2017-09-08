@@ -55,6 +55,7 @@ namespace Strathweb.TypedRouting.AspNetCore
             return route;
         }
 
+        [Obsolete("Please use EnableTypedRouting() on IMvcBuilder or IMvcCoreBuilder instead.")]
         public static void EnableTypedRouting(this MvcOptions opts)
         {
             opts.Conventions.Add(new TypedRoutingApplicationModelConvention(null));
