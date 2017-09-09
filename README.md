@@ -165,3 +165,7 @@ You can now use this class in the route declaration:
 ```csharp
 opt.Get("api/other", c => c.Action<OtherController>(x => x.Action1())).WithConstraints(new MandatoryHeaderConstraint("CustomHeader"));
 ```
+
+## License
+
+[MIT](https://github.com/filipw/Strathweb.TypedRouting.AspNetCore/blob/master/LICENSE)
