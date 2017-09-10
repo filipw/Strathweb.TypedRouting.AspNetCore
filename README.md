@@ -9,6 +9,11 @@ Everything is on [Nuget](https://www.nuget.org/packages/Strathweb.TypedRouting.A
 ```
 nuget install Strathweb.TypedRouting.AspNetCore
 ```
+or via the .NET Core CLI:
+
+```
+dotnet add package Strathweb.TypedRouting.AspNetCore
+```
 
 ## Setup
 
