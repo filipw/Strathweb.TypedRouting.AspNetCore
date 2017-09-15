@@ -31,6 +31,7 @@ namespace Strathweb.TypedRouting.AspNetCore
                     foreach (var route in typedRoutes)
                     {
                         var action = controller.Actions.FirstOrDefault(x => x.ActionMethod == route.ActionMember);
+                        if (action == null) continue;
 
                         var selectorModel = new SelectorModel
                         {
@@ -60,8 +61,13 @@ namespace Strathweb.TypedRouting.AspNetCore
                             }
                         }
 
-                        action?.Selectors.Clear();
-                        action?.Selectors.Insert(0, selectorModel);
+                        var nonAttributeSelectors = action.Selectors.Where(x => x.AttributeRouteModel == null).ToArray();
+                        foreach (var nonAttributeSelector in nonAttributeSelectors)
+                        {
+                            action.Selectors.Remove(nonAttributeSelector);
+                        }
+
+                        action.Selectors.Insert(0, selectorModel);
                     }
                 }
             }

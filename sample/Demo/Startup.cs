@@ -48,7 +48,7 @@ namespace Demo
                 opt.Get("api/secure_string", c => c.Action<OtherController>(x => x.Unreachable()).
                     WithAuthorizationPolicy("MyPolicy"));
 
-                opt.Get("api/secure_instance", c => c.Action<OtherController>(x => x.Unreachable2()).
+                opt.Get("api/secure_instance", c => c.Action<OtherController>(x => x.Unreachable()).
                     WithAuthorizationPolicy(new AuthorizationPolicyBuilder().RequireAuthenticatedUser().Build()));
             }).EnableTypedRouting();
         }

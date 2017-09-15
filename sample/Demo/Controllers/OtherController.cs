@@ -21,7 +21,5 @@ namespace Demo.Controllers
         }
 
         public void Unreachable() { }
-
-        public void Unreachable2() { }
     }
 }
