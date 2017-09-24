@@ -56,6 +56,9 @@ namespace Demo
         public void Configure(IApplicationBuilder app, IHostingEnvironment env, ILoggerFactory loggerFactory)
         {
             loggerFactory.AddDebug();
+            
+            // this is needed to make authz policies work
+            // at least a single authn middleware must be present 
             app.UseJwtBearerAuthentication();
             app.UseMvc();
         }
