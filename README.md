@@ -86,7 +86,7 @@ services.AddSingleton<TimerFilter>();
 
 services.AddMvc(opt =>
 {
-        opt.Get("api/items", c => c.Action<ItemsController>(x => x.Get())).WithFilters<TimerFilter>();
+        opt.Get("api/items", c => c.Action<ItemsController>(x => x.Get())).WithFilter<TimerFilter>();
 }).EnableTypedRouting();
 ```
 
