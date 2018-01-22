@@ -27,9 +27,14 @@ namespace Demo
             {
                 o.DefaultAuthenticateScheme = JwtBearerDefaults.AuthenticationScheme;
                 o.DefaultChallengeScheme = JwtBearerDefaults.AuthenticationScheme;
+            }).AddJwtBearer();
+
+            services.AddAuthorization(o =>
+            {
+                o.AddPolicy("MyPolicy", b => b.RequireAuthenticatedUser());
             });
 
-            services.AddMvc(opt =>
+            services.AddMvc().AddTypedRouting(opt =>
             {
                 opt.Get("api/items", c => c.Action<ItemsController>(x => x.Get())).
                     WithFilters(new AnnotationFilter());
@@ -52,7 +57,7 @@ namespace Demo
 
                 opt.Get("api/secure_instance", c => c.Action<OtherController>(x => x.Unreachable()).
                     WithAuthorizationPolicy(new AuthorizationPolicyBuilder().RequireAuthenticatedUser().Build()));
-            }).EnableTypedRouting();
+            });
         }
 
         public void Configure(IApplicationBuilder app, IHostingEnvironment env, ILoggerFactory loggerFactory)

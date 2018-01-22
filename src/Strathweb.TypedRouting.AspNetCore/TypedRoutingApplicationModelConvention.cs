@@ -13,21 +13,21 @@ namespace Strathweb.TypedRouting.AspNetCore
     public class TypedRoutingApplicationModelConvention : IApplicationModelConvention
     {
         private readonly IServiceProvider _serviceProvider;
+        private readonly TypedRoutingOptions _typedRoutingOptions;
 
-        public TypedRoutingApplicationModelConvention(IServiceProvider serviceProvider)
+        public TypedRoutingApplicationModelConvention(IServiceProvider serviceProvider, TypedRoutingOptions typedRoutingOptions)
         {
             _serviceProvider = serviceProvider;
+            _typedRoutingOptions = typedRoutingOptions;
         }
-
-        internal static Dictionary<TypeInfo, List<TypedRoute>> Routes = new Dictionary<TypeInfo, List<TypedRoute>>();
 
         public void Apply(ApplicationModel application)
         {
             foreach (var controller in application.Controllers)
             {
-                if (Routes.ContainsKey(controller.ControllerType))
+                if (_typedRoutingOptions.Routes.ContainsKey(controller.ControllerType))
                 {
-                    var typedRoutes = Routes[controller.ControllerType];
+                    var typedRoutes = _typedRoutingOptions.Routes[controller.ControllerType];
                     foreach (var route in typedRoutes)
                     {
                         var action = controller.Actions.FirstOrDefault(x => x.ActionMethod == route.ActionMember);

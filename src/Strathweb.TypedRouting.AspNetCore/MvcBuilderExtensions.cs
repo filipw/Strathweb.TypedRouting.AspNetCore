@@ -9,12 +9,23 @@ using Microsoft.Extensions.DependencyInjection.Extensions;
 
 namespace Strathweb.TypedRouting.AspNetCore
 {
-
     public static class MvcBuilderExtensions
     {
-        public static IMvcBuilder EnableTypedRouting(this IMvcBuilder builder)
+        public static IMvcBuilder AddTypedRouting(this IMvcBuilder builder, Action<TypedRoutingOptions> typedRoutingOptionsConfiguration)
+        {
+            var typedRoutingOptions = new TypedRoutingOptions();
+            typedRoutingOptionsConfiguration(typedRoutingOptions);
+
+            builder.Services.AddSingleton<IConfigureOptions<MvcOptions>, TypedRoutingOptionsSetup>();
+            builder.Services.AddSingleton<TypedRoutingOptions>(typedRoutingOptions);
+
+            return builder;
+        }
+
+        public static IMvcBuilder AddTypedRouting(this IMvcBuilder builder, TypedRoutingOptions typedRoutingOptions)
         {
             builder.Services.AddSingleton<IConfigureOptions<MvcOptions>, TypedRoutingOptionsSetup>();
+            builder.Services.AddSingleton<TypedRoutingOptions>(typedRoutingOptions);
             return builder;
         }
     }

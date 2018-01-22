@@ -1,26 +1,25 @@
 ﻿using System;
-using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Options;
-using Microsoft.Extensions.DependencyInjection.Extensions;
 
 namespace Strathweb.TypedRouting.AspNetCore
 {
     public class TypedRoutingOptionsSetup : IConfigureOptions<MvcOptions>
     {
-        private IServiceProvider _serviceProvider;
+        private readonly IServiceProvider _serviceProvider;
+        private readonly TypedRoutingOptions _options;
 
-        public TypedRoutingOptionsSetup(IServiceProvider serviceProvider)
+        public TypedRoutingOptionsSetup(IServiceProvider serviceProvider, TypedRoutingOptions options)
         {
             _serviceProvider = serviceProvider;
+            _options = options;
         }
 
         public void Configure(MvcOptions options)
         {
-            options.Conventions.Add(new TypedRoutingApplicationModelConvention(_serviceProvider));
+            options.Conventions.Add(new TypedRoutingApplicationModelConvention(_serviceProvider, _options));
         }
     }
 }
