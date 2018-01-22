@@ -26,31 +26,42 @@ namespace Demo
             {
                 o.AddPolicy("MyPolicy", b => b.RequireAuthenticatedUser());
             });
-
             services.AddMvc(opt =>
             {
-                opt.Get("api/items", c => c.Action<ItemsController>(x => x.Get())).
-                    WithFilters(new AnnotationFilter());
+                opt.AddStrathwebGet("strathweb", () =>
+                {
+                    return "wow!";
+                });
 
-                opt.Get("api/items/{id}", c => c.Action<ItemsController>(x => x.Get(Param<int>.Any))).
-                    WithName("GetItemById").
-                    WithFilter<AnnotationFilter>();
+                opt.AddStrathwebGet("strathweb/{test}", test =>
+                {
+                    return "wow! " + test;
+                });
 
-                opt.Post("api/items", c => c.Action<ItemsController>(x => x.Post(Param<Item>.Any)));
-                opt.Put("api/items/{id}", c => c.Action<ItemsController>(x => x.Put(Param<int>.Any, Param<Item>.Any)));
-                opt.Delete("api/items/{id}", c => c.Action<ItemsController>(x => x.Delete(Param<int>.Any)));
+                /* opt.Get("api/items", c => c.Action<ItemsController>(x => x.Get())).
+                     WithFilters(new AnnotationFilter());
 
-                opt.Get("api/other", c => c.Action<OtherController>(x => x.Action1())).
-                    WithConstraints(new MandatoryHeaderConstraint("CustomHeader"));
+                 opt.Get("api/items/{id}", c => c.Action<ItemsController>(x => x.Get(Param<int>.Any))).
+                     WithName("GetItemById").
+                     WithFilter<AnnotationFilter>();
 
-                opt.Get("api/other/{id:int}", c => c.Action<OtherController>(x => x.Action2(Param<int>.Any)));
+                 opt.Post("api/items", c => c.Action<ItemsController>(x => x.Post(Param<Item>.Any)));
+                 opt.Put("api/items/{id}", c => c.Action<ItemsController>(x => x.Put(Param<int>.Any, Param<Item>.Any)));
+                 opt.Delete("api/items/{id}", c => c.Action<ItemsController>(x => x.Delete(Param<int>.Any)));
 
-                opt.Get("api/secure_string", c => c.Action<OtherController>(x => x.Unreachable()).
-                    WithAuthorizationPolicy("MyPolicy"));
+                 opt.Get("api/other", c => c.Action<OtherController>(x => x.Action1())).
+                     WithConstraints(new MandatoryHeaderConstraint("CustomHeader"));
 
-                opt.Get("api/secure_instance", c => c.Action<OtherController>(x => x.Unreachable()).
-                    WithAuthorizationPolicy(new AuthorizationPolicyBuilder().RequireAuthenticatedUser().Build()));
-            }).EnableTypedRouting();
+                 opt.Get("api/other/{id:int}", c => c.Action<OtherController>(x => x.Action2(Param<int>.Any)));
+
+                 opt.Get("api/secure_string", c => c.Action<OtherController>(x => x.Unreachable()).
+                     WithAuthorizationPolicy("MyPolicy"));
+
+                 opt.Get("api/secure_instance", c => c.Action<OtherController>(x => x.Unreachable()).
+                     WithAuthorizationPolicy(new AuthorizationPolicyBuilder().RequireAuthenticatedUser().Build()));*/
+            });
+            services.AddStrathweb();
+
         }
 
         public void Configure(IApplicationBuilder app, IHostingEnvironment env, ILoggerFactory loggerFactory)
