@@ -9,6 +9,7 @@ using Microsoft.Extensions.Logging;
 using Strathweb.TypedRouting.AspNetCore;
 using Demo.Controllers;
 using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Authentication.JwtBearer;
 
 namespace Demo
 {
@@ -22,9 +23,10 @@ namespace Demo
             services.AddSingleton<TimerFilter>();
             services.AddSingleton<AnnotationFilter>();
 
-            services.AddAuthorization(o =>
+            services.AddAuthentication(o =>
             {
-                o.AddPolicy("MyPolicy", b => b.RequireAuthenticatedUser());
+                o.DefaultAuthenticateScheme = JwtBearerDefaults.AuthenticationScheme;
+                o.DefaultChallengeScheme = JwtBearerDefaults.AuthenticationScheme;
             });
 
             services.AddMvc(opt =>
@@ -59,7 +61,7 @@ namespace Demo
             
             // this is needed to make authz policies work
             // at least a single authn middleware must be present 
-            app.UseJwtBearerAuthentication();
+            app.UseAuthentication();
             app.UseMvc();
         }
     }
