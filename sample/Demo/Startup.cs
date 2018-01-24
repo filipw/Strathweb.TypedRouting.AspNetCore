@@ -9,6 +9,7 @@ using Microsoft.Extensions.Logging;
 using Strathweb.TypedRouting.AspNetCore;
 using Demo.Controllers;
 using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Authentication.JwtBearer;
 
 namespace Demo
 {
@@ -22,12 +23,18 @@ namespace Demo
             services.AddSingleton<TimerFilter>();
             services.AddSingleton<AnnotationFilter>();
 
+            services.AddAuthentication(o =>
+            {
+                o.DefaultAuthenticateScheme = JwtBearerDefaults.AuthenticationScheme;
+                o.DefaultChallengeScheme = JwtBearerDefaults.AuthenticationScheme;
+            }).AddJwtBearer();
+
             services.AddAuthorization(o =>
             {
                 o.AddPolicy("MyPolicy", b => b.RequireAuthenticatedUser());
             });
 
-            services.AddMvc(opt =>
+            services.AddMvc().AddTypedRouting(opt =>
             {
                 opt.Get("api/items", c => c.Action<ItemsController>(x => x.Get())).
                     WithFilters(new AnnotationFilter());
@@ -50,7 +57,7 @@ namespace Demo
 
                 opt.Get("api/secure_instance", c => c.Action<OtherController>(x => x.Unreachable()).
                     WithAuthorizationPolicy(new AuthorizationPolicyBuilder().RequireAuthenticatedUser().Build()));
-            }).EnableTypedRouting();
+            });
         }
 
         public void Configure(IApplicationBuilder app, IHostingEnvironment env, ILoggerFactory loggerFactory)
@@ -59,7 +66,7 @@ namespace Demo
             
             // this is needed to make authz policies work
             // at least a single authn middleware must be present 
-            app.UseJwtBearerAuthentication();
+            app.UseAuthentication();
             app.UseMvc();
         }
     }

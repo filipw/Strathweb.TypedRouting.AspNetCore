@@ -19,7 +19,7 @@ namespace Strathweb.TypedRouting.AspNetCore.Tests
 
         public IntegrationTests()
         {
-            TypedRoutingApplicationModelConvention.Routes.Clear();
+            //TypedRoutingApplicationModelConvention.Routes.Clear();
             _server = new TestServer(new WebHostBuilder()
                     .UseContentRoot(Directory.GetCurrentDirectory())
                     .UseStartup<Startup>());

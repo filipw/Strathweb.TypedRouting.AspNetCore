@@ -17,15 +17,15 @@ dotnet add package Strathweb.TypedRouting.AspNetCore
 
 ## Setup
 
-In your `Startup` class, after adding MVC, call `services.EnableTypedRouting();` and then configure your routes:
+In your `Startup` class, after adding MVC, call `services.AddTypedRouting();` and then configure your routes:
 
 ```csharp
-        services.AddMvc(opt =>
-        {
-            opt.Get("homepage", c => c.Action<HomeController>(x => x.Index()));
-            opt.Get("aboutpage/{name}", c => c.Action<HomeController>(x => x.About(Param<string>.Any)));
-            opt.Post("sendcontact", c => c.Action<HomeController>(x => x.Contact()));
-        }).EnableTypedRouting();
+services.AddMvc().AddTypedRouting(opt =>
+{
+    opt.Get("homepage", c => c.Action<HomeController>(x => x.Index()));
+    opt.Get("aboutpage/{name}", c => c.Action<HomeController>(x => x.About(Param<string>.Any)));
+    opt.Post("sendcontact", c => c.Action<HomeController>(x => x.Contact()));
+});
 ```
 
 This creates:
@@ -33,8 +33,7 @@ This creates:
 * a GET route to `/aboutpage/{name}`
 * a POST route to `/sendcontact`
 
-All of which go against the relevant methods on our `HomeController`.
-The old API supported calling `.EnableTypedRouting();` on the `MvcOptions` too, but this approach is now deprecated.
+All of which will route to the relevant methods on our `HomeController`.
 
 ## Link generation
 
@@ -61,11 +60,11 @@ var link = urlHelper.Link("GetValueById", new { id = 1 });
 Finally, you can also use this link generation technique with the built-in action results, such as for example `CreatedAtRouteResult`:
 
 ```csharp
-        public IActionResult Post([FromBody]string value)
-        {
-            var result = CreatedAtRoute("GetValueById", new { id = 1 }, "foo");
-            return result;
-        }
+public IActionResult Post([FromBody]string value)
+{
+    var result = CreatedAtRoute("GetValueById", new { id = 1 }, "foo");
+    return result;
+}
 ```
 
 ## Filters
@@ -73,10 +72,10 @@ Finally, you can also use this link generation technique with the built-in actio
 The route definitions can also be done along with filters that should be executed for a given route. This is equivalent to defining a controller action, and annotating it with a relevant attribute such as action filter or authorization filter.
 
 ```csharp
-services.AddMvc(opt =>
+services.AddMvc().AddTypedRouting(opt =>
 {
-        opt.Get("api/items", c => c.Action<ItemsController>(x => x.Get())).WithFilters(new AnnotationFilter());
-}).EnableTypedRouting();
+    opt.Get("api/items", c => c.Action<ItemsController>(x => x.Get())).WithFilters(new AnnotationFilter());
+});
 ```
 
 Filters can also be resolved from ASP.NET Core DI system - as long as they are registered there before.
@@ -84,10 +83,10 @@ Filters can also be resolved from ASP.NET Core DI system - as long as they are r
 ```csharp
 services.AddSingleton<TimerFilter>();
 
-services.AddMvc(opt =>
+services.AddMvc().AddTypedRouting(opt =>
 {
-        opt.Get("api/items", c => c.Action<ItemsController>(x => x.Get())).WithFilter<TimerFilter>();
-}).EnableTypedRouting();
+    opt.Get("api/items", c => c.Action<ItemsController>(x => x.Get())).WithFilter<TimerFilter>();
+});
 ```
 
 ## Authorization Policies
@@ -97,11 +96,11 @@ The route definitions can also have ASP.NET Core authorization policies attached
 You can pass in a policy instance:
 
 ```csharp
-services.AddMvc(opt =>
+services.AddMvc().AddTypedRouting(opt =>
 {
         opt.Get("api/secure", c => c.Action<OtherController>(x => x.Foo()).
                 WithAuthorizationPolicy(new AuthorizationPolicyBuilder().RequireAuthenticatedUser().Build()));
-}).EnableTypedRouting();
+});
 ```
 
 You can also define a policy as string - then a corresponding policy must be previously registerd in ASP.NET Core DI system.
@@ -112,11 +111,11 @@ services.AddAuthorization(o =>
         o.AddPolicy("MyPolicy", b => b.RequireAuthenticatedUser());
 });
 
-services.AddMvc(opt =>
+services.AddMvc().AddTypedRouting(opt =>
 {
         opt.Get("api/secure", c => c.Action<OtherController>(x => x.Foo()).
                 WithAuthorizationPolicy("MyPolicy"));
-}).EnableTypedRouting();
+});
 ```
 
 ## Action constraints
