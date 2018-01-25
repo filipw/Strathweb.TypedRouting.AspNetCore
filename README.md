@@ -17,7 +17,7 @@ dotnet add package Strathweb.TypedRouting.AspNetCore
 
 ## Setup
 
-In your `Startup` class, after adding MVC, call `services.AddTypedRouting();` and then configure your routes:
+In your `Startup` class, after adding MVC, call `AddTypedRouting();` and then configure your routes:
 
 ```csharp
 services.AddMvc().AddTypedRouting(opt =>
