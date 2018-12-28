@@ -1,7 +1,7 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
 
   <PropertyGroup>
-    <VersionPrefix>2.0.0</VersionPrefix>
+    <VersionPrefix>2.0.1</VersionPrefix>
     <Description>A library enabling typed routing in ASP.NET MVC Core projects. Next generation of the Strathweb.TypedRouting Web API 2 library.</Description>
     <Authors>filipw</Authors>
     <TargetFrameworks>netstandard2.0</TargetFrameworks>
@@ -10,7 +10,7 @@
     <PackageTags>ASP.NET Core;routing;typed;asp net;aspnetcore</PackageTags>
     <PackageIconUrl>https://raw.githubusercontent.com/filipw/Strathweb.TypedRouting.AspNetCore/master/strathweb.png</PackageIconUrl>
     <PackageProjectUrl>https://github.com/filipw/Strathweb.TypedRouting.AspNetCore</PackageProjectUrl>
-    <PackageLicenseUrl>https://github.com/filipw/Strathweb.TypedRouting.AspNetCore/blob/master/LICENSE</PackageLicenseUrl>
+    <PackageLicenseExpression>MIT</PackageLicenseExpression>
     <RepositoryType>git</RepositoryType>
     <RepositoryUrl>https://github.com/filipw/Strathweb.TypedRouting.AspNetCore.git</RepositoryUrl>
   </PropertyGroup>
