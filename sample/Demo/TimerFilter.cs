@@ -13,10 +13,10 @@ namespace Demo
 
         public override void OnActionExecuted(ActionExecutedContext context)
         {
-            if (context.HttpContext.Items.TryGetValue("start", out var start))
+            if (context.HttpContext.Items.TryGetValue("start", out var start) && start is DateTimeOffset startedAt)
             {
                 var end = DateTimeOffset.UtcNow;
-                context.HttpContext.Response.Headers.Add("ActionDuration", (end - (DateTimeOffset)start).ToString());
+                context.HttpContext.Response.Headers.Append("ActionDuration", (end - startedAt).ToString());
             }
         }
     }

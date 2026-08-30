@@ -1,8 +1,5 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
 using Microsoft.AspNetCore.Mvc;
+using Strathweb.TypedRouting.AspNetCore;
 
 namespace Demo.Controllers
 {
@@ -18,17 +15,17 @@ namespace Demo.Controllers
             return new Item { Text = "value" };
         }
 
-        public IActionResult Post([FromBody]Item item)
+        public IActionResult Post([FromBody] Item item)
         {
-            // one way to generate a link
-            var link = Url.Link("GetItemById", new { id = 1 });
+            // typed link generation - the action is referenced directly, so a rename is a compile error.
+            // the [FromBody] parameter of this action is never part of a URL, so it is left out automatically
+            var link = Url.Link<ItemsController>(x => x.Get(1));
+            Response.Headers.Append("TypedLink", link);
 
-            // another way to geenrate a link, using the built in action results
-            var result = CreatedAtRoute("GetItemById", new { id = 1 }, item);
-            return result;
+            return this.CreatedAtAction<ItemsController>(x => x.Get(1), item);
         }
 
-        public Item Put(int id, [FromBody]Item item)
+        public Item Put(int id, [FromBody] Item item)
         {
             return item;
         }

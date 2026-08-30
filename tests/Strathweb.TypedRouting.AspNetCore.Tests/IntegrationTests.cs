@@ -1,28 +1,22 @@
 ﻿using Demo;
-using Microsoft.AspNetCore.Hosting;
-using Microsoft.AspNetCore.TestHost;
-using Newtonsoft.Json;
-using System;
-using System.IO;
-using System.Linq;
+using Microsoft.AspNetCore.Mvc.Testing;
 using System.Net;
-using System.Net.Http;
 using System.Net.Http.Headers;
-using System.Threading.Tasks;
+using System.Net.Http.Json;
+using System.Text.Json;
 using Xunit;
 
 namespace Strathweb.TypedRouting.AspNetCore.Tests
 {
-    public class IntegrationTests
+    public class IntegrationTests : IClassFixture<WebApplicationFactory<Program>>
     {
-        private TestServer _server;
+        private static readonly JsonSerializerOptions JsonOptions = new(JsonSerializerDefaults.Web);
 
-        public IntegrationTests()
+        private readonly WebApplicationFactory<Program> _server;
+
+        public IntegrationTests(WebApplicationFactory<Program> server)
         {
-            //TypedRoutingApplicationModelConvention.Routes.Clear();
-            _server = new TestServer(new WebHostBuilder()
-                    .UseContentRoot(Directory.GetCurrentDirectory())
-                    .UseStartup<Startup>());
+            _server = server;
         }
 
         [Fact]
@@ -32,7 +26,7 @@ namespace Strathweb.TypedRouting.AspNetCore.Tests
 
             var request = new HttpRequestMessage(HttpMethod.Get, "api/items");
             var result = await client.SendAsync(request);
-            var items = JsonConvert.DeserializeObject<Item[]>(await result.Content.ReadAsStringAsync());
+            var items = JsonSerializer.Deserialize<Item[]>(await result.Content.ReadAsStringAsync(), JsonOptions)!;
 
             Assert.Equal(2, items.Length);
             Assert.Equal("value1", items[0].Text);
@@ -57,7 +51,7 @@ namespace Strathweb.TypedRouting.AspNetCore.Tests
 
             var request = new HttpRequestMessage(HttpMethod.Get, "api/items/7");
             var result = await client.SendAsync(request);
-            var item = JsonConvert.DeserializeObject<Item>(await result.Content.ReadAsStringAsync());
+            var item = JsonSerializer.Deserialize<Item>(await result.Content.ReadAsStringAsync(), JsonOptions);
 
             Assert.NotNull(item);
             Assert.Equal("value", item.Text);
@@ -104,11 +98,10 @@ namespace Strathweb.TypedRouting.AspNetCore.Tests
 
             var item = new Item { Text = "foo" };
             var request = new HttpRequestMessage(HttpMethod.Post, "api/items");
-            request.Content = new StringContent(JsonConvert.SerializeObject(item));
-            request.Content.Headers.ContentType = new MediaTypeHeaderValue("application/json");
+            request.Content = JsonContent.Create(item);
 
             var result = await client.SendAsync(request);
-            var echoItem = JsonConvert.DeserializeObject<Item>(await result.Content.ReadAsStringAsync());
+            var echoItem = JsonSerializer.Deserialize<Item>(await result.Content.ReadAsStringAsync(), JsonOptions);
 
             Assert.NotNull(echoItem);
             Assert.Equal(item.Text, echoItem.Text);
@@ -121,11 +114,10 @@ namespace Strathweb.TypedRouting.AspNetCore.Tests
 
             var item = new Item { Text = "foo" };
             var request = new HttpRequestMessage(HttpMethod.Put, "api/items/10");
-            request.Content = new StringContent(JsonConvert.SerializeObject(item));
-            request.Content.Headers.ContentType = new MediaTypeHeaderValue("application/json");
+            request.Content = JsonContent.Create(item);
 
             var result = await client.SendAsync(request);
-            var echoItem = JsonConvert.DeserializeObject<Item>(await result.Content.ReadAsStringAsync());
+            var echoItem = JsonSerializer.Deserialize<Item>(await result.Content.ReadAsStringAsync(), JsonOptions);
 
             Assert.NotNull(echoItem);
             Assert.Equal(item.Text, echoItem.Text);
