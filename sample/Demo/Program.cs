@@ -36,6 +36,10 @@ builder.Services.AddControllers().AddTypedRouting(opt =>
     opt.Get("api/other", c => c.Action<OtherController>(x => x.Action1())).
         WithConstraints(new MandatoryHeaderConstraint("CustomHeader"));
 
+    // the same constraint as above, without needing a class for it
+    opt.Get("api/other-lambda", c => c.Action<OtherController>(x => x.Action3())).
+        WithConstraint(ctx => ctx.RouteContext.HttpContext.Request.Headers.ContainsKey("CustomHeader"));
+
     opt.Get("api/other/{id:int}", c => c.Action<OtherController>(x => x.Action2(Param<int>.Any)));
 
     opt.Get("links/named", c => c.Action<LinksController>(x => x.ToNamedRoute()));

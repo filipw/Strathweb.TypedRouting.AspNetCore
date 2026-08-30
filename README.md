@@ -215,6 +215,15 @@ You can now use this class in the route declaration:
 opt.Get("api/other", c => c.Action<OtherController>(x => x.Action1())).WithConstraints(new MandatoryHeaderConstraint("CustomHeader"));
 ```
 
+For simple cases a class is unnecessary - a constraint can be declared inline as a lambda:
+
+```csharp
+opt.Get("api/other", c => c.Action<OtherController>(x => x.Action1())).
+    WithConstraint(ctx => ctx.RouteContext.HttpContext.Request.Headers.ContainsKey("CustomHeader"));
+```
+
+`WithConstraint` takes an optional `order` argument, matching `IActionConstraint.Order`.
+
 ## License
 
 [MIT](https://github.com/filipw/Strathweb.TypedRouting.AspNetCore/blob/master/LICENSE)
