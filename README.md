@@ -2,6 +2,8 @@
 
 A library enabling strongly typed routing in ASP.NET Core MVC projects.
 
+[![CI](https://github.com/filipw/Strathweb.TypedRouting.AspNetCore/actions/workflows/ci.yml/badge.svg)](https://github.com/filipw/Strathweb.TypedRouting.AspNetCore/actions/workflows/ci.yml)
+
 Supported on .NET 8 and .NET 10.
 
 ## Installation

@@ -1,0 +1,58 @@
+name: CI
+
+on:
+  push:
+    branches: [ master ]
+  pull_request:
+    branches: [ master ]
+  workflow_dispatch:
+
+env:
+  DOTNET_NOLOGO: true
+  DOTNET_CLI_TELEMETRY_OPTOUT: true
+  DOTNET_SKIP_FIRST_TIME_EXPERIENCE: true
+
+jobs:
+  build:
+    name: Build & test
+    runs-on: ubuntu-latest
+
+    steps:
+      - uses: actions/checkout@v4
+
+      # the library and the tests multi-target, so both runtimes have to be present
+      - name: Setup .NET
+        uses: actions/setup-dotnet@v4
+        with:
+          dotnet-version: |
+            8.0.x
+            10.0.x
+
+      - name: Restore
+        run: dotnet restore
+
+      # warnings fail the build here but not locally, so they cannot accumulate unnoticed
+      - name: Build
+        run: dotnet build --no-restore -c Release -warnaserror
+
+      - name: Test
+        run: dotnet test --no-build -c Release --logger trx --results-directory ./test-results
+
+      - name: Upload test results
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: test-results
+          path: ./test-results
+          if-no-files-found: error
+
+      # not a release - this only proves the package still builds
+      - name: Pack
+        run: dotnet pack src/Strathweb.TypedRouting.AspNetCore -c Release --no-build -o ./artifacts
+
+      - name: Upload package
+        uses: actions/upload-artifact@v4
+        with:
+          name: nupkg
+          path: ./artifacts/*.nupkg
+          if-no-files-found: error
