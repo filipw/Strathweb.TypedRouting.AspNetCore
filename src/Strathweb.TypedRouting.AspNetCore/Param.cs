@@ -7,6 +7,6 @@ namespace Strathweb.TypedRouting.AspNetCore
 {
     public static class Param<TValue>
     {
-        public static TValue Any => default(TValue);
+        public static TValue Any => default!;
     }
 }

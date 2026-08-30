@@ -40,6 +40,11 @@ namespace Strathweb.TypedRouting.AspNetCore
             var route = new TypedRoute(template);
             configSetup(route);
 
+            if (route.ControllerType == null)
+            {
+                throw new InvalidOperationException($"No controller action was configured for the route template '{template}'.");
+            }
+
             if (Routes.ContainsKey(route.ControllerType))
             {
                 var controllerActions = Routes[route.ControllerType];

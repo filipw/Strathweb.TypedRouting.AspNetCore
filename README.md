@@ -2,6 +2,8 @@
 
 A library enabling strongly typed routing in ASP.NET Core MVC projects.
 
+Supported on .NET 8 and .NET 10.
+
 ## Installation
 
 Everything is on [Nuget](https://www.nuget.org/packages/Strathweb.TypedRouting.AspNetCore). [![Nuget](http://img.shields.io/nuget/v/Strathweb.TypedRouting.AspNetCore.svg?maxAge=10800)](https://www.nuget.org/packages/Strathweb.TypedRouting.AspNetCore)
@@ -37,35 +39,76 @@ All of which will route to the relevant methods on our `HomeController`.
 
 ## Link generation
 
-Since the API is fluent, you can also give the routes names so that you can use them with i.e. link generation.
+Route definitions can be given names, so that they can be referenced from `IUrlHelper`:
 
 ```csharp
 opt.Get("api/values/{id}", c => c.Action<ValuesController>(x => x.Get(Param<int>.Any))).WithName("GetValueById");
 ```
 
-Now you can use it with `IUrlHelper` (it's a `Url` property on every controller):
-
 ```csharp
 var link = Url.Link("GetValueById", new { id = 1 });
 ```
 
-`IUrlHelper` can also be obtained from `HttpContext`, anywhere in the pipeline (i.e. in a filter):
+### Typed link generation
+
+Route names are still strings, so the library also lets you generate links from the action itself. Rename or
+re-sign an action and you get a compile error instead of a broken URL at runtime:
 
 ```csharp
-var services = context.HttpContext.RequestServices;
-var urlHelper = services.GetRequiredService<IUrlHelperFactory>().GetUrlHelper(context);
-var link = urlHelper.Link("GetValueById", new { id = 1 });
+// "/api/values/1"
+var path = Url.Action<ValuesController>(x => x.Get(1));
+
+// "https://localhost:5001/api/values/1"
+var uri = Url.Link<ValuesController>(x => x.Get(1));
 ```
 
-Finally, you can also use this link generation technique with the built-in action results, such as for example `CreatedAtRouteResult`:
+Arguments are read straight from the expression, and they do not have to be literals:
 
 ```csharp
-public IActionResult Post([FromBody]string value)
+var path = Url.Action<ValuesController>(x => x.Get(item.Id));
+```
+
+Values that are not part of the route template are appended as a query string:
+
+```csharp
+// "/api/values/1?page=2"
+var path = Url.Action<ValuesController>(x => x.Get(1), new { page = 2 });
+```
+
+Parameters that can never appear in a URL - anything bound from the body, form, headers, or DI, plus
+`CancellationToken` - are left out automatically:
+
+```csharp
+// "/api/values/1", the posted model is ignored
+var path = Url.Action<ValuesController>(x => x.Put(1, model));
+```
+
+Overloaded actions are disambiguated by the expression, so `x => x.Get()` and `x => x.Get(1)` generate links
+to their own routes. When the target route was given a name via `WithName`, that name is used for generation,
+which identifies the endpoint exactly.
+
+### Outside of controllers
+
+`LinkGenerator` has the same extensions, for use in middleware, filters and anywhere else with an
+`HttpContext` at hand:
+
+```csharp
+var path = linkGenerator.GetPathByAction<ValuesController>(httpContext, x => x.Get(1));
+var uri = linkGenerator.GetUriByAction<ValuesController>(httpContext, x => x.Get(1));
+```
+
+### Action results
+
+The built-in action results that point at another action have typed counterparts too:
+
+```csharp
+public IActionResult Post([FromBody] Value value)
 {
-    var result = CreatedAtRoute("GetValueById", new { id = 1 }, "foo");
-    return result;
+    return this.CreatedAtAction<ValuesController>(x => x.Get(1), value);
 }
 ```
+
+`AcceptedAtAction<T>` works the same way.
 
 ## Filters
 

@@ -6,7 +6,6 @@ using System.Reflection;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Mvc.ApplicationModels;
 using Microsoft.AspNetCore.Mvc.ActionConstraints;
-using Microsoft.AspNetCore.Mvc.Internal;
 using Microsoft.AspNetCore.Mvc.Filters;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc.Authorization;
@@ -23,9 +22,9 @@ namespace Strathweb.TypedRouting.AspNetCore
             FilterTypes = new List<Type>();
         }
 
-        public TypeInfo ControllerType { get; private set; }
+        public TypeInfo? ControllerType { get; private set; }
 
-        public MethodInfo ActionMember { get; private set; }
+        public MethodInfo? ActionMember { get; private set; }
 
         public List<IActionConstraintMetadata> Constraints { get; private set; }
 
@@ -41,26 +40,23 @@ namespace Strathweb.TypedRouting.AspNetCore
 
         public TypedRoute Action<T>(Expression<Action<T>> expression)
         {
-            ActionMember = GetMethodInfoInternal(expression);
-            ControllerType = ActionMember.DeclaringType.GetTypeInfo();
+            SetAction(expression);
             return this;
         }
 
         public TypedRoute Action<T>(Expression<Func<T, Task>> expression)
         {
-            ActionMember = GetMethodInfoInternal(expression);
-            ControllerType = ActionMember.DeclaringType.GetTypeInfo();
+            SetAction(expression);
             return this;
         }
 
-        private static MethodInfo GetMethodInfoInternal(dynamic expression)
+        private void SetAction(LambdaExpression expression)
         {
-            var method = expression.Body as MethodCallExpression;
-            if (method != null)
-                return method.Method;
-
-            throw new ArgumentException("Expression is incorrect!");
+            ActionMember = ExpressionHelper.GetMethodCall(expression).Method;
+            ControllerType = ActionMember.DeclaringType?.GetTypeInfo()
+                ?? throw new ArgumentException("Could not determine the declaring controller type of the action.", nameof(expression));
         }
+
 
         public TypedRoute WithName(string name)
         {
