@@ -74,6 +74,15 @@ namespace Strathweb.TypedRouting.AspNetCore.Tests
         }
 
         [Fact]
+        public async Task Generates_Links_To_Plain_Attribute_Routed_Actions()
+        {
+            // PlainController has no typed route registered - link generation still works,
+            // which means the feature is usable in any controller based app
+            Assert.Equal("/plain/3", await Get("links/attribute-routed"));
+            Assert.Equal("/plain/unnamed/3", await Get("links/attribute-routed-unnamed"));
+        }
+
+        [Fact]
         public async Task CreatedAtAction_Sets_A_Typed_Location_Header()
         {
             var client = _server.CreateClient();

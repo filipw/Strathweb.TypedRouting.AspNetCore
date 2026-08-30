@@ -44,6 +44,8 @@ builder.Services.AddControllers().AddTypedRouting(opt =>
     opt.Get("links/extra-values", c => c.Action<LinksController>(x => x.WithExtraValues()));
     opt.Get("links/from-local/{id}", c => c.Action<LinksController>(x => x.FromLocal(Param<int>.Any)));
     opt.Get("links/async", c => c.Action<LinksController>(x => x.ToAsyncAction()));
+    opt.Get("links/attribute-routed", c => c.Action<LinksController>(x => x.ToAttributeRouted()));
+    opt.Get("links/attribute-routed-unnamed", c => c.Action<LinksController>(x => x.ToAttributeRoutedUnnamed()));
     opt.Get("links/generator", c => c.Action<LinksController>(x => x.ViaLinkGenerator()));
     opt.Get("links/absolute", c => c.Action<LinksController>(x => x.AbsoluteUri()));
 

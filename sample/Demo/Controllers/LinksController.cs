@@ -32,6 +32,11 @@ namespace Demo.Controllers
         // an async action referenced through its Task returning signature
         public string ToAsyncAction() => Url.Action<OtherController>(x => x.Action1())!;
 
+        // targets a controller that typed routing knows nothing about
+        public string ToAttributeRouted() => Url.Action<PlainController>(x => x.ById(3))!;
+
+        public string ToAttributeRoutedUnnamed() => Url.Action<PlainController>(x => x.Unnamed(3))!;
+
         public string ViaLinkGenerator() => _linkGenerator.GetPathByAction<ItemsController>(HttpContext, x => x.Get(7))!;
 
         public string AbsoluteUri() => _linkGenerator.GetUriByAction<ItemsController>(HttpContext, x => x.Get(7))!;
