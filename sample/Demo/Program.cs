@@ -2,10 +2,12 @@ using Demo;
 using Demo.Controllers;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Routing;
 using Strathweb.TypedRouting.AspNetCore;
 
 var builder = WebApplication.CreateBuilder(args);
 
+builder.Services.AddTypedLinkGeneration();
 builder.Services.AddSingleton<TimerFilter>();
 builder.Services.AddSingleton<AnnotationFilter>();
 
@@ -50,6 +52,9 @@ builder.Services.AddControllers().AddTypedRouting(opt =>
     opt.Get("links/async", c => c.Action<LinksController>(x => x.ToAsyncAction()));
     opt.Get("links/attribute-routed", c => c.Action<LinksController>(x => x.ToAttributeRouted()));
     opt.Get("links/attribute-routed-unnamed", c => c.Action<LinksController>(x => x.ToAttributeRoutedUnnamed()));
+    opt.Get("links/to-minimal", c => c.Action<LinksController>(x => x.ToMinimalApi()));
+    opt.Get("links/area", c => c.Action<LinksController>(x => x.ToArea()));
+    opt.Get("links/by-methodinfo", c => c.Action<LinksController>(x => x.ByMethodInfo()));
     opt.Get("links/generator", c => c.Action<LinksController>(x => x.ViaLinkGenerator()));
     opt.Get("links/absolute", c => c.Action<LinksController>(x => x.AbsoluteUri()));
 
@@ -65,6 +70,33 @@ var app = builder.Build();
 app.UseAuthentication();
 app.UseAuthorization();
 app.MapControllers();
+
+// minimal API endpoints - deliberately a mix of named and unnamed
+app.MapGet("/minimal/items/{id}", MinimalHandlers.GetItem).WithName("MinimalGetItem");
+app.MapGet("/minimal/search/{q}", MinimalHandlers.Search);
+app.MapGet("/minimal/async/{id}", MinimalHandlers.GetAsync);
+app.MapPost("/minimal/tenants/{tenantId}/items", MinimalHandlers.Create);
+
+// a typed Created result - the target endpoint does not need a name
+app.MapPost("/minimal/items", (Item item) =>
+    Results.Extensions.CreatedAtHandler(() => MinimalHandlers.GetItem(77), item));
+
+// minimal API -> controller action
+app.MapGet("/minimal/to-controller", (LinkGenerator links, HttpContext ctx) =>
+    links.GetPathByAction<ItemsController>(ctx, x => x.Get(3)));
+
+app.MapGet("/minimal/unmapped-target", (LinkGenerator links, HttpContext ctx) =>
+    links.GetPathByHandler(ctx, () => MinimalHandlers.Unmapped(1)) ?? "<null>");
+
+app.MapGet("/minimal/links", (LinkGenerator links, HttpContext ctx) => string.Join("\n", new[]
+{
+    links.GetPathByHandler(ctx, () => MinimalHandlers.GetItem(5)),
+    links.GetPathByHandler(ctx, () => MinimalHandlers.Search("shoes", 3)),
+    links.GetPathByHandler(ctx, () => MinimalHandlers.GetAsync(9)),
+    links.GetPathByHandler(ctx, () => MinimalHandlers.Create(42, null!, null!)),
+    links.GetUriByHandler(ctx, () => MinimalHandlers.GetItem(5)),
+    links.GetPathByHandler(ctx, () => MinimalHandlers.GetItem(5), new { debug = true }),
+}));
 
 app.Run();
 

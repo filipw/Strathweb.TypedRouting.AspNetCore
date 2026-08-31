@@ -140,7 +140,7 @@ namespace Strathweb.TypedRouting.AspNetCore
             return IsSimpleType(parameterType);
         }
 
-        private static bool IsSimpleType(Type type)
+        internal static bool IsSimpleType(Type type)
         {
             var underlying = Nullable.GetUnderlyingType(type) ?? type;
             return underlying.IsPrimitive || underlying.IsEnum || AdditionalSimpleTypes.Contains(underlying);
