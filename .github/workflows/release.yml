@@ -1,0 +1,101 @@
+name: Release
+
+on:
+  push:
+    tags:
+      - 'v*'
+  workflow_dispatch:
+    inputs:
+      version:
+        description: 'Version to publish, without a leading v (e.g. 3.0.0 or 3.1.0-preview.1)'
+        required: true
+        type: string
+
+permissions:
+  contents: read
+
+env:
+  DOTNET_NOLOGO: true
+  DOTNET_CLI_TELEMETRY_OPTOUT: true
+  DOTNET_SKIP_FIRST_TIME_EXPERIENCE: true
+
+jobs:
+  release:
+    name: Pack & publish
+    runs-on: ubuntu-latest
+    # add required reviewers to this environment to get a manual gate before anything is pushed
+    environment: nuget
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Setup .NET
+        uses: actions/setup-dotnet@v4
+        with:
+          dotnet-version: |
+            8.0.x
+            10.0.x
+
+      # the tag (or the dispatch input) is the single source of truth for the version,
+      # so cutting a release never needs a commit that edits the csproj
+      - name: Resolve version
+        id: version
+        env:
+          INPUT_VERSION: ${{ inputs.version }}
+          TAG_NAME: ${{ github.ref_name }}
+        run: |
+          set -euo pipefail
+          if [ -n "${INPUT_VERSION:-}" ]; then
+            VERSION="$INPUT_VERSION"
+          else
+            VERSION="${TAG_NAME#v}"
+          fi
+          if ! printf '%s' "$VERSION" | grep -Eq '^[0-9]+\.[0-9]+\.[0-9]+(-[0-9A-Za-z.-]+)?$'; then
+            echo "::error::'$VERSION' is not a valid NuGet version"
+            exit 1
+          fi
+          echo "version=$VERSION" >> "$GITHUB_OUTPUT"
+          echo "Releasing $VERSION"
+
+      - name: Restore
+        run: dotnet restore
+
+      - name: Build
+        run: >
+          dotnet build --no-restore -c Release -warnaserror
+          -p:ContinuousIntegrationBuild=true
+          -p:Version=${{ steps.version.outputs.version }}
+
+      # never publish something the tests have not run against
+      - name: Test
+        run: dotnet test --no-build -c Release
+
+      - name: Pack
+        run: >
+          dotnet pack src/Strathweb.TypedRouting.AspNetCore --no-build -c Release
+          -p:ContinuousIntegrationBuild=true
+          -p:Version=${{ steps.version.outputs.version }}
+          -o ./artifacts
+
+      # keep a copy of exactly what was published, whatever happens to the push step
+      - name: Upload package
+        uses: actions/upload-artifact@v4
+        with:
+          name: nupkg-${{ steps.version.outputs.version }}
+          path: ./artifacts/*
+          if-no-files-found: error
+
+      - name: Push to NuGet
+        env:
+          NUGET_API_KEY: ${{ secrets.NUGET_API_KEY }}
+        run: |
+          set -euo pipefail
+          if [ -z "${NUGET_API_KEY:-}" ]; then
+            echo "::error::NUGET_API_KEY secret is not set"
+            exit 1
+          fi
+          # the matching .snupkg is picked up and pushed alongside each .nupkg
+          dotnet nuget push "artifacts/*.nupkg" \
+            --api-key "$NUGET_API_KEY" \
+            --source https://api.nuget.org/v3/index.json \
+            --skip-duplicate
