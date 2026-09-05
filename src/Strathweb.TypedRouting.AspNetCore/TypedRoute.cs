@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Diagnostics.CodeAnalysis;
 using System.Linq;
 using System.Linq.Expressions;
 using System.Reflection;
@@ -14,7 +15,7 @@ namespace Strathweb.TypedRouting.AspNetCore
 {
     public class TypedRoute : AttributeRouteModel
     {
-        public TypedRoute(string template)
+        public TypedRoute([StringSyntax("Route")] string template)
         {
             Template = template;
             Constraints = new List<IActionConstraintMetadata>();
@@ -73,6 +74,12 @@ namespace Strathweb.TypedRouting.AspNetCore
         public TypedRoute WithConstraints(params IActionConstraintMetadata[] constraints)
         {
             Constraints.AddRange(constraints);
+            return this;
+        }
+
+        public TypedRoute WithConstraint(Func<ActionConstraintContext, bool> constraint, int order = 0)
+        {
+            Constraints.Add(new DelegateActionConstraint(constraint, order));
             return this;
         }
 

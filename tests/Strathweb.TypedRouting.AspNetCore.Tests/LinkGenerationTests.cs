@@ -83,6 +83,18 @@ namespace Strathweb.TypedRouting.AspNetCore.Tests
         }
 
         [Fact]
+        public async Task Generates_Links_To_Actions_In_Areas()
+        {
+            Assert.Equal("/admin/reports/4", await Get("links/area"));
+        }
+
+        [Fact]
+        public async Task Controller_Actions_Are_Addressable_By_MethodInfo()
+        {
+            Assert.Equal("/api/items/8", await Get("links/by-methodinfo"));
+        }
+
+        [Fact]
         public async Task CreatedAtAction_Sets_A_Typed_Location_Header()
         {
             var client = _server.CreateClient();

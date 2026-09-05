@@ -20,6 +20,8 @@ namespace Demo.Controllers
             return id;
         }
 
+        public string Action3() => "lambda";
+
         public void Unreachable() { }
     }
 }

@@ -1,5 +1,7 @@
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Routing;
+using Demo.Areas.Admin.Controllers;
+using System.Reflection;
 using Strathweb.TypedRouting.AspNetCore;
 
 namespace Demo.Controllers
@@ -36,6 +38,18 @@ namespace Demo.Controllers
         public string ToAttributeRouted() => Url.Action<PlainController>(x => x.ById(3))!;
 
         public string ToAttributeRoutedUnnamed() => Url.Action<PlainController>(x => x.Unnamed(3))!;
+
+        // controller -> minimal API handler
+        public string ToMinimalApi() => _linkGenerator.GetPathByHandler(HttpContext, () => MinimalHandlers.GetItem(5))!;
+
+        // an action in an area
+        public string ToArea() => Url.Action<ReportsController>(x => x.Get(4))!;
+
+        // addressing a controller action by MethodInfo through the address scheme directly
+        public string ByMethodInfo() =>
+            _linkGenerator.GetPathByAddress(HttpContext,
+                typeof(ItemsController).GetMethod(nameof(ItemsController.Get), new[] { typeof(int) })!,
+                new Microsoft.AspNetCore.Routing.RouteValueDictionary(new { id = 8 }))!;
 
         public string ViaLinkGenerator() => _linkGenerator.GetPathByAction<ItemsController>(HttpContext, x => x.Get(7))!;
 

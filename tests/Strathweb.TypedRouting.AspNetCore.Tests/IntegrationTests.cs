@@ -153,6 +153,30 @@ namespace Strathweb.TypedRouting.AspNetCore.Tests
         }
 
         [Fact]
+        public async Task LambdaConstraint_Accepts_When_Satisfied()
+        {
+            var client = _server.CreateClient();
+
+            var request = new HttpRequestMessage(HttpMethod.Get, "api/other-lambda");
+            request.Headers.Add("CustomHeader", "abc");
+
+            var result = await client.SendAsync(request);
+
+            Assert.Equal(HttpStatusCode.OK, result.StatusCode);
+            Assert.Equal("lambda", await result.Content.ReadAsStringAsync());
+        }
+
+        [Fact]
+        public async Task LambdaConstraint_Rejects_When_Not_Satisfied()
+        {
+            var client = _server.CreateClient();
+
+            var result = await client.GetAsync("api/other-lambda");
+
+            Assert.Equal(HttpStatusCode.NotFound, result.StatusCode);
+        }
+
+        [Fact]
         public async Task ApiOther_WithoutHeader()
         {
             var client = _server.CreateClient();
